@@ -122,23 +122,37 @@ Include at least one sentence discussing the result of your fact-checking endeav
 Upload your changes to the repository. Discuss and refine answers as a team.
 
 
-## ----your name here----
-
+## Michaela Beck 
 For each team member, copy this part of the report. 
 
 Each team member picks one of the statements in the FiveThirtyEight [analysis](https://fivethirtyeight.com/features/avengers-death-comics-age-of-ultron/) and fact checks it based on the data. Use dplyr functionality whenever possible.
 
 ### FiveThirtyEight Statement
 
-> Quote the statement you are planning to fact-check.
+> But you can only tempt death so many times. There’s a 2-in-3 chance that a member of the Avengers returned from their first stint in the afterlife.
 
 ### Include the code
 
 Make sure to include the code to derive the (numeric) fact for the statement
+```{r}
+#count the number of return 1
+# Count the number of "yes" values in Return1 column
+count_yes <- returns %>%
+  filter(Time == "Return1", Returned == "YES") %>%
+  count()
 
-### Include your answer
+count_death1 <- deaths %>%
+  filter(Time == "Death1", Died == "YES") %>%
+  count()
 
-Include at least one sentence discussing the result of your fact-checking endeavor.
+count_yes
+count_death1
 
-Upload your changes to the repository. Discuss and refine answers as a team.
+count_yes/count_death1
+
+```
+
+In the returns table I counted the number of times "YES" was in the Deaths1 columns and also counted the number of times Return1 appeared after Death1. After reviewing the data set I found 69 first deaths and 46 returns from the first deaths resulting in an average of .667. This confirms there’s a 2-in-3 chance that a member of the Avengers returned from their first stint in the afterlife.
+
+
 

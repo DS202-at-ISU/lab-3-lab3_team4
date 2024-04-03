@@ -75,6 +75,8 @@ data set `deaths`.
 library(dplyr)
 ```
 
+    ## Warning: package 'dplyr' was built under R version 4.3.3
+
     ## 
     ## Attaching package: 'dplyr'
 
@@ -89,6 +91,8 @@ library(dplyr)
 ``` r
 library(tidyverse)
 ```
+
+    ## Warning: package 'readr' was built under R version 4.3.3
 
     ## ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
     ## ✔ forcats   1.0.0     ✔ readr     2.1.5
@@ -204,7 +208,7 @@ avg
 #So we can see that each Avenger dies an average of .546 times
 ```
 
-## Individually
+## Zane Eason
 
 For each team member, copy this part of the report.
 
@@ -230,7 +234,7 @@ fact-checking endeavor.
 Upload your changes to the repository. Discuss and refine answers as a
 team.
 
-## Individually
+## Michaela Beck
 
 For each team member, copy this part of the report.
 
@@ -241,17 +245,53 @@ possible.
 
 ### FiveThirtyEight Statement
 
-> Quote the statement you are planning to fact-check.
+> But you can only tempt death so many times. There’s a 2-in-3 chance
+> that a member of the Avengers returned from their first stint in the
+> afterlife.
 
 ### Include the code
 
 Make sure to include the code to derive the (numeric) fact for the
 statement
 
-### Include your answer
+``` r
+#count the number of return 1
+# Count the number of "yes" values in Return1 column
+count_yes <- returns %>%
+  filter(Time == "Return1", Returned == "YES") %>%
+  count()
 
-Include at least one sentence discussing the result of your
-fact-checking endeavor.
+count_death1 <- deaths %>%
+  filter(Time == "Death1", Died == "YES") %>%
+  count()
 
-Upload your changes to the repository. Discuss and refine answers as a
-team.
+count_yes
+```
+
+    ## # A tibble: 1 × 1
+    ##       n
+    ##   <int>
+    ## 1    46
+
+``` r
+count_death1
+```
+
+    ## # A tibble: 1 × 1
+    ##       n
+    ##   <int>
+    ## 1    69
+
+``` r
+count_yes/count_death1
+```
+
+    ##           n
+    ## 1 0.6666667
+
+In the returns table I counted the number of times “YES” was in the
+Deaths1 columns and also counted the number of times Return1 appeared
+after Death1. After reviewing the data set I found 69 first deaths and
+46 returns from the first deaths resulting in an average of .667. This
+confirms there’s a 2-in-3 chance that a member of the Avengers returned
+from their first stint in the afterlife.

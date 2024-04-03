@@ -1,4 +1,3 @@
-[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-24ddc0f5d75046c5622901739e7c5dd533143b0c8e959d652212380cedb1ea36.svg)](https://classroom.github.com/a/kHEW-1QV)
 
 <!-- README.md is generated from README.Rmd. Please edit the README.Rmd file -->
 
@@ -72,10 +71,134 @@ between 1 and 5 (look into the function `parse_number`); Death is a
 categorical variables with values “yes”, “no” and ““. Call the resulting
 data set `deaths`.
 
+``` r
+library(dplyr)
+```
+
+    ## 
+    ## Attaching package: 'dplyr'
+
+    ## The following objects are masked from 'package:stats':
+    ## 
+    ##     filter, lag
+
+    ## The following objects are masked from 'package:base':
+    ## 
+    ##     intersect, setdiff, setequal, union
+
+``` r
+library(tidyverse)
+```
+
+    ## ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+    ## ✔ forcats   1.0.0     ✔ readr     2.1.5
+    ## ✔ ggplot2   3.4.4     ✔ stringr   1.5.1
+    ## ✔ lubridate 1.9.3     ✔ tibble    3.2.1
+    ## ✔ purrr     1.0.2     ✔ tidyr     1.3.0
+
+    ## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ✖ dplyr::filter() masks stats::filter()
+    ## ✖ dplyr::lag()    masks stats::lag()
+    ## ℹ Use the conflicted package (<http://conflicted.r-lib.org/>) to force all conflicts to become errors
+
+``` r
+deaths <- av %>% select(
+  URL, 
+  Name.Alias, 
+  Appearances,
+  Current.,
+  Gender,
+  Probationary.Introl,
+  Full.Reserve.Avengers.Intro,
+  Year,
+  Years.since.joining,
+  Honorary,
+  starts_with("Death"),
+  Notes
+) %>% pivot_longer(
+  cols = Death1:Death5,
+  names_to = "Time",
+  values_to = "Died"
+)
+
+head(deaths)
+```
+
+    ## # A tibble: 6 × 13
+    ##   URL                 Name.Alias Appearances Current. Gender Probationary.Introl
+    ##   <chr>               <chr>            <int> <chr>    <chr>  <chr>              
+    ## 1 http://marvel.wiki… "Henry Jo…        1269 YES      MALE   ""                 
+    ## 2 http://marvel.wiki… "Henry Jo…        1269 YES      MALE   ""                 
+    ## 3 http://marvel.wiki… "Henry Jo…        1269 YES      MALE   ""                 
+    ## 4 http://marvel.wiki… "Henry Jo…        1269 YES      MALE   ""                 
+    ## 5 http://marvel.wiki… "Henry Jo…        1269 YES      MALE   ""                 
+    ## 6 http://marvel.wiki… "Janet va…        1165 YES      FEMALE ""                 
+    ## # ℹ 7 more variables: Full.Reserve.Avengers.Intro <chr>, Year <int>,
+    ## #   Years.since.joining <int>, Honorary <chr>, Notes <chr>, Time <chr>,
+    ## #   Died <chr>
+
 Similarly, deal with the returns of characters.
+
+``` r
+returns <- av %>% select(
+  URL, 
+  Name.Alias, 
+  Appearances,
+  Current.,
+  Gender,
+  Probationary.Introl,
+  Full.Reserve.Avengers.Intro,
+  Year,
+  Years.since.joining,
+  Honorary,
+  starts_with("Return"),
+  Notes
+) %>% pivot_longer(
+  cols = Return1:Return5,
+  names_to = "Time",
+  values_to = "Returned"
+)
+
+head(returns)
+```
+
+    ## # A tibble: 6 × 13
+    ##   URL                 Name.Alias Appearances Current. Gender Probationary.Introl
+    ##   <chr>               <chr>            <int> <chr>    <chr>  <chr>              
+    ## 1 http://marvel.wiki… "Henry Jo…        1269 YES      MALE   ""                 
+    ## 2 http://marvel.wiki… "Henry Jo…        1269 YES      MALE   ""                 
+    ## 3 http://marvel.wiki… "Henry Jo…        1269 YES      MALE   ""                 
+    ## 4 http://marvel.wiki… "Henry Jo…        1269 YES      MALE   ""                 
+    ## 5 http://marvel.wiki… "Henry Jo…        1269 YES      MALE   ""                 
+    ## 6 http://marvel.wiki… "Janet va…        1165 YES      FEMALE ""                 
+    ## # ℹ 7 more variables: Full.Reserve.Avengers.Intro <chr>, Year <int>,
+    ## #   Years.since.joining <int>, Honorary <chr>, Notes <chr>, Time <chr>,
+    ## #   Returned <chr>
 
 Based on these datasets calculate the average number of deaths an
 Avenger suffers.
+
+``` r
+freq <- deaths %>% count(Died=="YES")
+
+freq
+```
+
+    ## # A tibble: 2 × 2
+    ##   `Died == "YES"`     n
+    ##   <lgl>           <int>
+    ## 1 FALSE             776
+    ## 2 TRUE               89
+
+``` r
+#As seen here, there have been 89 deaths
+
+avg <- 89/length(unique(deaths$Name.Alias))
+
+avg
+```
+
+    ## [1] 0.5460123
 
 ## Individually
 

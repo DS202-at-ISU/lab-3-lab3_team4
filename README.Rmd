@@ -27,6 +27,8 @@ Extract from the data below two data sets in long form `deaths` and `returns`
 ```{r}
 av <- read.csv("https://raw.githubusercontent.com/fivethirtyeight/data/master/avengers/avengers.csv", stringsAsFactors = FALSE)
 head(av)
+
+
 ```
 
 Get the data into a format where the five columns for Death[1-5] are replaced by two columns: Time, and Death. Time should be a number between 1 and 5 (look into the function `parse_number`); Death is a categorical variables with values "yes", "no" and "". Call the resulting data set `deaths`. 
@@ -154,5 +156,177 @@ count_yes/count_death1
 
 In the returns table I counted the number of times "YES" was in the Deaths1 columns and also counted the number of times Return1 appeared after Death1. After reviewing the data set I found 69 first deaths and 46 returns from the first deaths resulting in an average of .667. This confirms there’s a 2-in-3 chance that a member of the Avengers returned from their first stint in the afterlife.
 
+**<span style="font-size: 200%; font-weight: bold;">#Varun</span>**
+
+```{r}
+library(dplyr)
+library(tidyr)
+
+```
 
 
+
+```{r}
+av <- read.csv("https://raw.githubusercontent.com/fivethirtyeight/data/master/avengers/avengers.csv", stringsAsFactors = FALSE)
+head(av)
+```
+
+```{r}
+class(df)
+
+df <- read.csv("https://raw.githubusercontent.com/fivethirtyeight/data/master/avengers/avengers.csv")  # Adjust this line as per your actual code
+class(df)  
+
+```
+```{r}
+deaths <- av %>%
+  pivot_longer(
+    cols = starts_with("Death"), 
+    names_to = "Time", 
+    values_to = "Death",
+    names_prefix = "Death"
+  ) %>%
+  mutate(
+    Time = as.integer(parse_number(Time)),
+    Death = case_when(
+      Death == "YES" ~ "yes",
+      Death == "NO" ~ "no",
+      TRUE ~ ""
+    )
+  )
+head(deaths)
+
+
+
+```
+
+
+```{r}
+library(dplyr)
+library(tidyr)
+
+returns <- av %>%
+  pivot_longer(
+    cols = starts_with("Return"), 
+    names_to = "Time", 
+    values_to = "Return",
+    names_prefix = "Return"
+  ) %>%
+  mutate(
+    Time = as.integer(parse_number(Time)),
+    Return = case_when(
+      Return == "YES" ~ "yes",
+      Return == "NO" ~ "no",
+      TRUE ~ ""
+    )
+  ) %>%
+  head(n = 10)  # This line was missing the pipe operator (%>%)
+
+returns  # Print or further process the result
+
+```
+
+
+how many deaths on average, does an Avenger suffer?
+```{r}
+average_deaths_per_avenger <- deaths %>%
+  filter(Death == "yes") %>% # Filter for rows where Death is "yes"
+  group_by(Name.Alias) %>% # Group by Avenger's name or alias
+  summarise(Deaths = n()) %>% # Count the number of deaths for each Avenger
+  summarise(Average_Deaths = mean(Deaths)) # Calculate the average number of deaths
+
+print(average_deaths_per_avenger)
+
+```
+
+On average, an Avenger suffers approximately 1.39 deaths.
+
+
+Each team member picks one of the statements in the FiveThirtyEight analysis and fact checks it based on the data. Use dplyr functionality whenever possible.
+
+
+
+
+
+**Most Avengers were introduced before the year 2000**
+```{r}
+avengers_pre_2000 <- df %>%
+  summarise(Total = n(),
+            Pre_2000 = sum(Year < 2000),
+            Percent_Pre_2000 = Pre_2000 / Total * 100)
+
+print(avengers_pre_2000)
+
+```
+Out of 173 Avengers in the dataset, 90 were introduced before the year 2000. This means that approximately 52.02% of the Avengers made their first appearance before the year 2000.
+
+
+
+**There are Avengers who have died more than once**
+
+```{r}
+died_more_than_once <- deaths %>%
+  filter(Death == "yes") %>%
+  group_by(Name.Alias) %>%
+  summarise(Times_Died = n()) %>%
+  filter(Times_Died > 1)
+
+print(died_more_than_once)
+
+```
+
+The output lists Avengers who have died and returned more than once. Notably, Jocasta has died 5 times, Mar-Vell 3 times, and several others like Anthony Ludgate Druid, Ares, Clinton Francis Barton (Hawkeye), Dennis Dunphy, Eric Kevin Masterson, Heather Douglas, and Jonathan Hart have died 2 times each.
+
+
+**The majority of Avengers are male**
+```{r}
+gender_distribution <- df %>%
+  group_by(Gender) %>%
+  summarise(Count = n()) %>%
+  mutate(Percent = Count / sum(Count) * 100)
+print(gender_distribution)
+```
+Among the Avengers, there are 58 females and 115 males. This indicates that 33.53% of the Avengers are female, while 66.47% are male.
+
+## Brennan Sauser
+
+For each team member, copy this part of the report.
+
+Each team member picks one of the statements in the FiveThirtyEight
+[analysis](https://fivethirtyeight.com/features/avengers-death-comics-age-of-ultron/)
+and fact checks it based on the data. Use dplyr functionality whenever
+possible.
+
+### FiveThirtyEight Statement
+
+> Given the Avengers’ 53 years in operation and overall mortality rate,
+> fans of the comics can expect one current or former member to die every seven months or so,
+> with a permanent death occurring once every 20 months.
+
+### Include the code
+
+```{r}
+deaths <- av %>% pivot_longer(
+        cols = starts_with("Death"),
+        names_to = "Time",
+        values_to = "Death")
+
+returns <- av %>% pivot_longer(
+        cols = starts_with("Return"),
+        names_to = "Time",
+        values_to = "Return")
+
+overall_deaths <- sum(deaths$Death == "yes")
+
+permanent_deaths <- sum(deaths$Death == "yes" & !(deaths$Name.Alias %in% returns$Name.Alias[returns$Return == "yes"]))
+
+avg_months_per_death <- (53*12) / overall_deaths
+avg_months_per_permanent_death <- (53*12) / permanent_deaths
+
+print(paste("The average number of months per death is approximately", round(avg_months_per_death, 2)))
+print(paste("The average number of months per permanent death is approximately", round(avg_months_per_permanent_death, 2)))
+```
+
+### Include your answer
+
+This code helps to find the average number of months for each death and each permanent death among the Avengers. These values are then compared with the ones mentioned in the statement. While these results might not be entirely accurate, they should end pretty close.
